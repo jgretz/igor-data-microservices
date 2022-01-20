@@ -1,2 +1,2 @@
-export {BaseCrudController} from './crud.controller';
-export {BaseCommandController} from './command.controller';
+export {CrudController} from './crud.controller';
+export {CommandController} from './command.controller';
