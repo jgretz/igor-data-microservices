@@ -1,6 +1,6 @@
 {
   "name": "@jgretz/igor-data-microservice",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "utility logic to support data based igor microservices",
   "author": "jgretz",
   "license": "MIT",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@jgretz/igor-data": "^1.0.6",
-    "@jgretz/igor-rabbit": "^1.0.5",
+    "@jgretz/igor-rabbit": "^1.0.6",
     "@nestjs/common": "^8.2.4",
     "@nestjs/core": "^8.2.4",
     "@nestjs/microservices": "^8.2.4",

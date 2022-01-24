@@ -9,24 +9,28 @@ export class CrudController {
       const crudMessage = message.payload as CrudEventArgs;
       const service = crudServices[crudMessage.resource];
       if (!service) {
-        return null; // TODO: figure out what to return
+        return new Error(`handler for ${CRUD} | ${key} pair not found`);
       }
 
-      switch (crudMessage.type) {
-        case CrudTypes.Find:
-          return await service.find(crudMessage.query);
+      try {
+        switch (crudMessage.type) {
+          case CrudTypes.Find:
+            return await service.find(crudMessage.query);
 
-        case CrudTypes.FindOne:
-          return await service.findOne(crudMessage.id);
+          case CrudTypes.FindOne:
+            return await service.findOne(crudMessage.id);
 
-        case CrudTypes.Create:
-          return await service.create(crudMessage.body);
+          case CrudTypes.Create:
+            return await service.create(crudMessage.body);
 
-        case CrudTypes.Update:
-          return await service.update(crudMessage.id, crudMessage.body);
+          case CrudTypes.Update:
+            return await service.update(crudMessage.id, crudMessage.body);
 
-        case CrudTypes.Delete:
-          return await service.remove(crudMessage.id);
+          case CrudTypes.Delete:
+            return await service.remove(crudMessage.id);
+        }
+      } catch (err) {
+        return err instanceof Error ? err : new Error(err.message);
       }
     });
   }
