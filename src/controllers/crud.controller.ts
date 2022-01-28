@@ -1,6 +1,27 @@
 import {Controller} from '@nestjs/common';
+import {CRUD, IgorResultType} from '@jgretz/igor-shared';
+import {ITypeORMService} from '@jgretz/igor-data';
 import {RabbitMessage, RabbitMqService} from '@jgretz/igor-rabbit';
-import {CRUD, CrudEventArgs, CrudServices, CrudTypes} from '../Types';
+import {CrudEventArgs, CrudServices, CrudTypes} from '../Types';
+
+const execute = async (service: ITypeORMService, crudMessage: CrudEventArgs) => {
+  switch (crudMessage.type) {
+    case CrudTypes.Find:
+      return await service.find(crudMessage.query);
+
+    case CrudTypes.FindOne:
+      return await service.findOne(crudMessage.id);
+
+    case CrudTypes.Create:
+      return await service.create(crudMessage.body);
+
+    case CrudTypes.Update:
+      return await service.update(crudMessage.id, crudMessage.body);
+
+    case CrudTypes.Delete:
+      return await service.remove(crudMessage.id);
+  }
+};
 
 @Controller()
 export class CrudController {
@@ -9,28 +30,15 @@ export class CrudController {
       const crudMessage = message.payload as CrudEventArgs;
       const service = crudServices[crudMessage.resource];
       if (!service) {
-        return new Error(`handler for ${CRUD} | ${key} pair not found`);
+        return {type: IgorResultType.NotFound};
       }
 
       try {
-        switch (crudMessage.type) {
-          case CrudTypes.Find:
-            return await service.find(crudMessage.query);
+        const result = await execute(service, crudMessage);
 
-          case CrudTypes.FindOne:
-            return await service.findOne(crudMessage.id);
-
-          case CrudTypes.Create:
-            return await service.create(crudMessage.body);
-
-          case CrudTypes.Update:
-            return await service.update(crudMessage.id, crudMessage.body);
-
-          case CrudTypes.Delete:
-            return await service.remove(crudMessage.id);
-        }
+        return {type: IgorResultType.Success, result};
       } catch (err) {
-        return err instanceof Error ? err : new Error(err.message);
+        return {type: IgorResultType.Error, result: err.message};
       }
     });
   }

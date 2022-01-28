@@ -1,6 +1,7 @@
 import {Controller} from '@nestjs/common';
+import {COMMAND, IgorResultType} from '@jgretz/igor-shared';
 import {RabbitMessage, RabbitMqService} from '@jgretz/igor-rabbit';
-import {COMMAND, CommandServices, CommandEventArgs} from '../Types';
+import {CommandServices, CommandEventArgs} from '../Types';
 
 @Controller()
 export class CommandController {
@@ -9,13 +10,14 @@ export class CommandController {
       const args = message.payload as CommandEventArgs;
       const service = commandServices[args.target];
       if (!service) {
-        return new Error(`handler for ${COMMAND} | ${key} pair not found`);
+        return {type: IgorResultType.NotFound};
       }
 
       try {
-        return await service(args);
+        const result = await service(args);
+        return {type: IgorResultType.Success, result};
       } catch (err) {
-        return err instanceof Error ? err : new Error(err.message);
+        return {type: IgorResultType.Error, result: err.message};
       }
     });
   }

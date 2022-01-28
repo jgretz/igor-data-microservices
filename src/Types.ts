@@ -1,10 +1,5 @@
 import {ITypeORMService} from '@jgretz/igor-data';
 
-export const CRUD = 'CRUD';
-export const COMMAND = 'COMMAND';
-
-export type Events = 'CRUD' | 'COMMAND';
-
 export type CommandServices = {
   [key: string]: (args: CommandEventArgs) => unknown | Promise<unknown>;
 };
