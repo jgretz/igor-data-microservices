@@ -34,6 +34,9 @@ export class CrudController {
       }
 
       try {
+        console.log(
+          `Executing ${crudMessage.type} | ${crudMessage.source} | ${crudMessage.resource} | ${crudMessage.id} | ${crudMessage.query} `,
+        );
         const result = await execute(service, crudMessage);
 
         return {type: IgorResultType.Success, result};

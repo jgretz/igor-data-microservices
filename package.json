@@ -1,6 +1,6 @@
 {
   "name": "@jgretz/igor-data-microservice",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "utility logic to support data based igor microservices",
   "author": "jgretz",
   "license": "MIT",
